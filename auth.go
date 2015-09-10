@@ -37,11 +37,16 @@ func Github(client, secret, scope string) *AuthHandler {
 	return New(NewGithubProvider(client, secret, scope))
 }
 
+// Github allocates and returns a new AuthHandler, using the GithubProvider.
+func Wso2(client, secret, scope string, redir string) *AuthHandler {
+	return New(NewWso2Provider(client, secret, scope, redir))
+}
+/*
 // OpenId allocates and returns a new AuthHandler, using the OpenIdProvider.
 func OpenId(url string) *AuthHandler {
 	return New(NewOpenIdProvider(url))
 }
-
+*/
 // Bitbucket allocates and returns a new AuthHandler, using the BitbucketProvider.
 func Bitbucket(key, secret, callback string) *AuthHandler {
 	return New(NewBitbucketProvider(key, secret, callback))
