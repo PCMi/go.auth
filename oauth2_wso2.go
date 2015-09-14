@@ -19,7 +19,11 @@ type Wso2User struct {
 	UserEmail    interface{} `json:"email"`
 }
 
-func (u *Wso2User) Id() string       { return u.UserName.(string) }
+func (u *Wso2User) Id() string       { 
+	if u.UserName == nil { return "" }; 
+	return u.UserName.(string) 
+	}
+
 func (u *Wso2User) Provider() string { return "Wso2.com" }
 
 // Below fields need to be parsed as interface{} and converted to String
