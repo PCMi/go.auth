@@ -17,6 +17,7 @@ type Wso2User struct {
 	GivenName interface{} `json:"given_name"`
 	
 	UserEmail    interface{} `json:"email"`
+	UserCompany    interface{} `json:"appid"`
 }
 
 func (u *Wso2User) Id() string       { 
@@ -55,8 +56,8 @@ func (u *Wso2User) Picture() string {
 }
 
 func (u *Wso2User) Org() string {
-	//if u.UserCompany == nil { return "" }
-	//return u.UserCompany.(string)
+	if u.UserCompany == nil { return "" }
+	return u.UserCompany.(string)
 	return ""
 }
 
