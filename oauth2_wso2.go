@@ -2,12 +2,11 @@ package auth
 
 import (
 	"net/http"
-	"fmt"
+	//"fmt"
 	//"net/url"
 	"io/ioutil"
 	"encoding/json"
 	
-	"github.com/davecgh/go-spew/spew"
 )
 
 type Wso2User struct {
@@ -72,8 +71,8 @@ type Wso2Provider struct {
 // NewWso2Provider allocates and returns a new Wso2Provider.
 func NewWso2Provider(clientId, clientSecret, scope string, redir string) *Wso2Provider {
 	wso2 := Wso2Provider{}
-	wso2.AuthorizationURL = "https://idm.rxwiki.com/oauth2/authorize"
-	wso2.AccessTokenURL   = "https://idm.rxwiki.com/oauth2/token"
+	wso2.AuthorizationURL = "https:///accounts.rxwiki.com/oauth2/authorize"
+	wso2.AccessTokenURL   = "https://accounts.rxwiki.com/oauth2/token"
 	wso2.ClientId         = clientId
 	wso2.ClientSecret     = clientSecret
 	wso2.Scope            = scope
@@ -107,10 +106,9 @@ func (self *Wso2Provider) GetAuthenticatedUser(w http.ResponseWriter, r *http.Re
 	//err = self.OAuth2Mixin.GetAuthenticatedUser("https://api.github.com/user", token.AccessToken, &user)
 	//err = self.OAuth2Mixin.GetAuthenticatedUser("https://idm.rxwiki.com/oauth2/userinfo?schema=openid", token.AccessToken, &user)
 	//err = self.OAuth2Mixin.GetAuthenticatedUser("https://idm.rxwiki.com/oauth2/userinfo?scope=user:email", token.AccessToken, &user)
-	err = self.GetAuthenticatedUserBearer("https://idm.rxwiki.com/oauth2/userinfo?schema=openid", token.AccessToken, &user, "schema=openid")
-	fmt.Println("user data ", err, user)
-	fmt.Println(token.AccessToken)
-	spew.Dump(user)
+	err = self.GetAuthenticatedUserBearer("https://accounts.rxwiki.com/oauth2/userinfo?schema=openid", token.AccessToken, &user, "schema=openid")
+	//fmt.Println("user data ", err, user)
+	//fmt.Println(token.AccessToken)
 	return &user, token, err
 }
 
@@ -145,8 +143,8 @@ fmt.Println("---------------------", endpointUrl)
 
 	//get the response body
 	userData, err := ioutil.ReadAll(r.Body)
-	fmt.Println("GetAuthenticatedUserBearer get user data", userData)
-	spew.Dump(userData)
+	//fmt.Println("GetAuthenticatedUserBearer get user data", userData)
+
 	defer r.Body.Close()
 	if err != nil {
 		return err
