@@ -20,7 +20,7 @@ func (u *GoogleUser) Email() string    { return u.UserEmail }
 func (u *GoogleUser) Picture() string  { return u.UserPicture }
 func (u *GoogleUser) Link() string     { return u.UserLink }
 func (u *GoogleUser) Org() string      { return "" }
-
+func (u *GoogleUser) Role()      string { return "" }
 // GoogleProvider is an implementation of Google's Oauth2 
 // for web application flow.
 // See https://developers.google.com/accounts/docs/OAuth2WebServer

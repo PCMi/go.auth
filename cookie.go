@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	
+	"github.com/davecgh/go-spew/spew"
 )
 
 // Error messages related to the Secure Cookie parsing and verification
@@ -41,14 +43,15 @@ func SetUserCookieOpts(w http.ResponseWriter, cookie *http.Cookie, user User) {
 
 	// default cookie expiration
 	exp := time.Now().Add(Config.CookieExp)
-
+fmt.Println("=============================")
+spew.Dump(user)
 	// generate cookie valid for 24 hours for user
 	// the strings are quoted to ensure they aren't tampered with
 	// TODO explore storing string as a URL Parameter String
-	userStr := fmt.Sprintf("%q|%q|%q|%q|%q|%q|%q",
+	userStr := fmt.Sprintf("%q|%q|%q|%q|%q|%q|%q|%q",
 							user.Id(), user.Provider(), user.Name(),
 							user.Email(), user.Link(), user.Picture(),
-							user.Org())
+							user.Org(), user.Role())
 
 	// set the cookie's value
 	cookie.Value = authcookie.New(userStr, exp, Config.CookieSecret)
@@ -112,9 +115,9 @@ func GetUserCookieName(r *http.Request, name string) (User, error) {
 
 	// parse the user data from the cookie string
 	u := user { }
-	_, err = fmt.Fscanf(strings.NewReader(login), "%q|%q|%q|%q|%q|%q|%q",
+	_, err = fmt.Fscanf(strings.NewReader(login), "%q|%q|%q|%q|%q|%q|%q|%q",
 								&u.id, &u.provider, &u.name, &u.email,
-								&u.link, &u.picture, &u.org)
+								&u.link, &u.picture, &u.org, &u.role)
 
 	// if we were unable to parse the cookie return an exception
 	if err != nil {

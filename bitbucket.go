@@ -18,7 +18,7 @@ func (u *BitbucketUser) Email()    string { return "" }
 func (u *BitbucketUser) Link()     string { return "https://bitbucket.org/"+u.UserId }
 func (u *BitbucketUser) Picture()  string { return u.UserPicture }
 func (u *BitbucketUser) Org()      string { return "" }
-
+func (u *BitbucketUser) Role()      string { return "" }
 
 // BitbucketProvider is an implementation of Bitbucket's Oauth1.0a protocol.
 // See https://confluence.atlassian.com/display/BITBUCKET/OAuth+on+Bitbucket

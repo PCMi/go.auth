@@ -2,11 +2,12 @@ package auth
 
 import (
 	"net/http"
-	//"fmt"
+	"fmt"
 	//"net/url"
 	"io/ioutil"
 	"encoding/json"
-	
+	"os"
+	"github.com/davecgh/go-spew/spew"
 )
 
 type Wso2User struct {
@@ -14,7 +15,7 @@ type Wso2User struct {
 	FamilyName interface{} `json:"family_name"`
 	PreferredName interface{} `json:"preferred_username"`
 	GivenName interface{} `json:"given_name"`
-	
+	UserRole interface{} `json:"role"`
 	UserEmail    interface{} `json:"email"`
 	UserCompany    interface{} `json:"appid"`
 }
@@ -29,6 +30,10 @@ func (u *Wso2User) Provider() string { return "Wso2.com" }
 // Below fields need to be parsed as interface{} and converted to String
 // because Golang (as of version 1.0) does not support parsing JSON Strings
 // with an explicit null value.
+func (u *Wso2User) Role() string {
+	if u.UserRole == nil { return "" }; 
+	return u.UserRole.(string)
+}
 
 func (u *Wso2User) Name() string {
 	if u.UserName == nil { return "" }; 
@@ -68,16 +73,27 @@ type Wso2Provider struct {
 	Scope string
 }
 
+type WsoConfig struct {
+	AuthorizationURL string
+	AccessTokenURL string
+	UserAuthURL string
+	ClientId string
+	ClientSecret string
+	Scope string
+	RedirectURL string
+}
+
 // NewWso2Provider allocates and returns a new Wso2Provider.
-func NewWso2Provider(clientId, clientSecret, scope string, redir string) *Wso2Provider {
+//func NewWso2Provider(clientId, clientSecret, scope string, redir string) *Wso2Provider {
+func NewWso2Provider(c WsoConfig) *Wso2Provider {
 	wso2 := Wso2Provider{}
-	wso2.AuthorizationURL = "https:///accounts.rxwiki.com/oauth2/authorize"
-	wso2.AccessTokenURL   = "https://accounts.rxwiki.com/oauth2/token"
-	wso2.ClientId         = clientId
-	wso2.ClientSecret     = clientSecret
-	wso2.Scope            = scope
+	wso2.AuthorizationURL = c.AuthorizationURL
+	wso2.AccessTokenURL   = c.AccessTokenURL
+	wso2.ClientId         = c.ClientId
+	wso2.ClientSecret     = c.ClientSecret
+	wso2.Scope            = c.Scope
 	//Wso2.Scope            = scope
-	wso2.OAuth2Mixin.RedirectURL = redir //"http://jeff-beego.rxwiki.com/auth/login"
+	wso2.OAuth2Mixin.RedirectURL = c.RedirectURL //"http://jeff-beego.rxwiki.com/auth/login"
 	// default the Scope if not provided
 	if len(wso2.Scope) == 0 {
 		wso2.Scope = "user:email"
@@ -106,7 +122,9 @@ func (self *Wso2Provider) GetAuthenticatedUser(w http.ResponseWriter, r *http.Re
 	//err = self.OAuth2Mixin.GetAuthenticatedUser("https://api.github.com/user", token.AccessToken, &user)
 	//err = self.OAuth2Mixin.GetAuthenticatedUser("https://idm.rxwiki.com/oauth2/userinfo?schema=openid", token.AccessToken, &user)
 	//err = self.OAuth2Mixin.GetAuthenticatedUser("https://idm.rxwiki.com/oauth2/userinfo?scope=user:email", token.AccessToken, &user)
-	err = self.GetAuthenticatedUserBearer("https://accounts.rxwiki.com/oauth2/userinfo?schema=openid", token.AccessToken, &user, "schema=openid")
+	//err = self.GetAuthenticatedUserBearer("https://accounts.rxwiki.com/oauth2/userinfo?schema=openid", token.AccessToken, &user, "schema=openid")
+	err = self.GetAuthenticatedUserBearer(os.Getenv("IDMUserInfoURL"), token.AccessToken, &user, "schema=openid")
+	
 	//fmt.Println("user data ", err, user)
 	//fmt.Println(token.AccessToken)
 	return &user, token, err
@@ -144,7 +162,8 @@ fmt.Println("---------------------", endpointUrl)
 	//get the response body
 	userData, err := ioutil.ReadAll(r.Body)
 	//fmt.Println("GetAuthenticatedUserBearer get user data", userData)
-
+fmt.Println("--------------------------------")
+spew.Dump(userData)
 	defer r.Body.Close()
 	if err != nil {
 		return err

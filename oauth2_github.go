@@ -12,7 +12,7 @@ type GitHubUser struct {
 	UserLink     interface{} `json:"html_url"`
 	UserLogin    string      `json:"login"`
 }
-
+func (u *GitHubUser) Role()      string { return "" }
 func (u *GitHubUser) Id() string       { return u.UserLogin }
 func (u *GitHubUser) Provider() string { return "github.com" }
 

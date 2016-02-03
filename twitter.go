@@ -15,7 +15,7 @@ func (u *TwitterUser) Email()    string { return "" }
 func (u *TwitterUser) Link()     string { return "https://www.twitter.com/" + u.UserId }
 func (u *TwitterUser) Picture()  string { return "" }
 func (u *TwitterUser) Org()      string { return "" }
-
+func (u *TwitterUser) Role()      string { return "" }
 
 // TwitterProvider is an implementation of Twitters's Oauth1.0a protocol.
 // See https://dev.twitter.com/docs/auth/implementing-sign-twitter

@@ -38,8 +38,8 @@ func Github(client, secret, scope string) *AuthHandler {
 }
 
 // Github allocates and returns a new AuthHandler, using the GithubProvider.
-func Wso2(client, secret, scope string, redir string) *AuthHandler {
-	return New(NewWso2Provider(client, secret, scope, redir))
+func Wso2(c WsoConfig) *AuthHandler {
+	return New(NewWso2Provider(c))
 }
 /*
 // OpenId allocates and returns a new AuthHandler, using the OpenIdProvider.
@@ -160,6 +160,7 @@ type User interface {
 	Org()      string // Company or Organization the User belongs to
 	Picture()  string // URL of the User's Profile picture
 	Link()     string // URL of the User's Profile page
+	Role() string
 }
 
 // An implementation of User, for internal package use only.
@@ -171,6 +172,7 @@ type user struct {
 	org      string
 	link     string
 	picture  string
+	role string
 }
 
 func (u *user) Id() string       { return u.id }
@@ -181,7 +183,7 @@ func (u *user) Org() string      { return u.org }
 func (u *user) Link() string     { return u.link }
 func (u *user) Picture() string  { return u.picture }
 func (u *user) Avatar() string   { return u.picture }
-
+func (u *user) Role() string   { return u.role }
 // SecureFunc will attempt to verify a user session exists prior to executing
 // the http.HandlerFunc. If no valid sessions exists, the user will be
 // redirected to the Config.LoginRedirect Url.
